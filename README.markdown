@@ -48,17 +48,17 @@ RabbitMQ Sink
 ------
 
 | Name           | Default                    | Description                                                               |
-|----------------|:--------------------------:|--------------------------------------------------------------------------:|
-| hostname       | -                          | hostname of server where RabbitMQ is running on                           |
+|----------------|----------------------------|---------------------------------------------------------------------------|
+| hostname       | -                          | hostname of server where RabbitMQ is running on |
 | username       | guest                      | username for connecting to RabbitMQ |
 | password       | guest                      | password for connecting to RabbitMQ |
 | port           | 5672                       | port RabbitMQ uses for linstening incoming traffic |
 | virutalhost    | /                          | virutal host on RabbitMQ |
-| queuename      | flume-rabbitmq-queue       | the queue name that messages will be shown on. Be aware that this is a durable queue which means messages written to this queue will be peristent to disk. |
+| queuename      | flume-rabbitmq-queue       | the queue name that messages will be shown on. Be aware that this is a durable queue which means messages written to this queue will be persisted to disk. |
 | exchangename   | flume-rabbitmq-exchange    | the exchange name that flume is going send message to |
 | routingkey     | flume-rabbitmq-routing-key | used by RabbitMQ to bind queue with exchange          |
 | batchsize      | 1                          | by default, messages are sent to RabbitMQ one by one. By increasing the batchsize, a batch of messages will be sent to RabbitMQ before calling commit on flume transcation. |
-| confirmtimeout | 500                        | there is a latency on RabbitMQ persist messages to disk. Consider increase this number if the batchsize is big |
+| confirmtimeout | 500                        | there is a latency on RabbitMQ persists messages to disk. Consider increase this number if the batchsize is big |
 
 **Minimal Config Example**
 
