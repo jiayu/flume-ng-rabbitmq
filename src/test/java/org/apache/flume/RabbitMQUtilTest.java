@@ -41,7 +41,7 @@ public class RabbitMQUtilTest {
     
     @Test(expected=java.lang.IllegalArgumentException.class)
     public void getFactory_null_hostname(){
-        context.put(RabbitMQConstants.CONFIG_HOSTNAME, null);
+        context.put(FlumeRabbitMQConstants.CONFIG_HOSTNAME, null);
         RabbitMQUtil.getFactory(context);  
     }
     
@@ -50,12 +50,12 @@ public class RabbitMQUtilTest {
     @Before
     public void createContext() {
         context = new Context();
-        context.put(RabbitMQConstants.CONFIG_HOSTNAME, "server01.example.com");
-        context.put(RabbitMQConstants.CONFIG_PORT, "12345");
-        context.put(RabbitMQConstants.CONFIG_CONNECTIONTIMEOUT, "30000");
-        context.put(RabbitMQConstants.CONFIG_PASSWORD, "daofoasidnfioand");
-        context.put(RabbitMQConstants.CONFIG_USERNAME, "asdfasdfasd");
-        context.put(RabbitMQConstants.CONFIG_VIRTUALHOST, "virtualhost1");
+        context.put(FlumeRabbitMQConstants.CONFIG_HOSTNAME, "server01.example.com");
+        context.put(FlumeRabbitMQConstants.CONFIG_PORT, "12345");
+        context.put(FlumeRabbitMQConstants.CONFIG_CONNECTIONTIMEOUT, "30000");
+        context.put(FlumeRabbitMQConstants.CONFIG_PASSWORD, "daofoasidnfioand");
+        context.put(FlumeRabbitMQConstants.CONFIG_USERNAME, "asdfasdfasd");
+        context.put(FlumeRabbitMQConstants.CONFIG_VIRTUALHOST, "virtualhost1");
     }
     
     @Test
@@ -63,22 +63,22 @@ public class RabbitMQUtilTest {
         ConnectionFactory factory = RabbitMQUtil.getFactory(context);
         Assert.assertNotNull("factory should not be null", context);
         
-        Assert.assertEquals("Host does not match", context.getString(RabbitMQConstants.CONFIG_HOSTNAME), factory.getHost());
-        Assert.assertEquals("Port does not match", context.getInteger(RabbitMQConstants.CONFIG_PORT), (Integer)factory.getPort());
-        Assert.assertEquals("ConnectionTimeout does not match", context.getInteger(RabbitMQConstants.CONFIG_CONNECTIONTIMEOUT), (Integer)factory.getConnectionTimeout());
-        Assert.assertEquals("Password does not match", context.getString(RabbitMQConstants.CONFIG_PASSWORD), factory.getPassword());
-        Assert.assertEquals("Username does not match", context.getString(RabbitMQConstants.CONFIG_USERNAME), factory.getUsername());
-        Assert.assertEquals("VirtualHost does not match", context.getString(RabbitMQConstants.CONFIG_VIRTUALHOST), factory.getVirtualHost());
+        Assert.assertEquals("Host does not match", context.getString(FlumeRabbitMQConstants.CONFIG_HOSTNAME), factory.getHost());
+        Assert.assertEquals("Port does not match", context.getInteger(FlumeRabbitMQConstants.CONFIG_PORT), (Integer)factory.getPort());
+        Assert.assertEquals("ConnectionTimeout does not match", context.getInteger(FlumeRabbitMQConstants.CONFIG_CONNECTIONTIMEOUT), (Integer)factory.getConnectionTimeout());
+        Assert.assertEquals("Password does not match", context.getString(FlumeRabbitMQConstants.CONFIG_PASSWORD), factory.getPassword());
+        Assert.assertEquals("Username does not match", context.getString(FlumeRabbitMQConstants.CONFIG_USERNAME), factory.getUsername());
+        Assert.assertEquals("VirtualHost does not match", context.getString(FlumeRabbitMQConstants.CONFIG_VIRTUALHOST), factory.getVirtualHost());
     }
     
     public void getFactory_minimal(){
         context = new Context();
-        context.put(RabbitMQConstants.CONFIG_HOSTNAME, "server01.example.com");
+        context.put(FlumeRabbitMQConstants.CONFIG_HOSTNAME, "server01.example.com");
         
         ConnectionFactory factory = RabbitMQUtil.getFactory(context);
         Assert.assertNotNull("factory should not be null", context);
         
-        Assert.assertEquals("Host does not match", context.getString(RabbitMQConstants.CONFIG_HOSTNAME), factory.getHost());
+        Assert.assertEquals("Host does not match", context.getString(FlumeRabbitMQConstants.CONFIG_HOSTNAME), factory.getHost());
     }
     
 }

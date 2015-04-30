@@ -18,7 +18,7 @@
  */
 package org.apache.flume;
 
-public class RabbitMQConstants {
+public class FlumeRabbitMQConstants {
     public final static String COUNTER_NEW_CONNECTION="rabbitmq.newconnection";
     public final static String COUNTER_NEW_CHANNEL="rabbitmq.newchannel";
     public final static String COUNTER_EXCEPTION="rabbitmq.exception";
@@ -35,5 +35,14 @@ public class RabbitMQConstants {
     public final static String CONFIG_CONNECTIONTIMEOUT="connectiontimeout";
     public final static String CONFIG_EXCHANGENAME="exchangename";
     public final static String CONFIG_QUEUENAME="queuename";
+    public final static String CONFIG_ROUTING_KEY="routingkey";
     public final static String CONFIG_TOPICS="topics";
+    public final static String CONFIG_BATCH_SIZE="batchsize";
+    public final static String CONFIG_CONFIRM_TIMEOUT="confirmtimeout";
+
+    public final static String DEFAULT_QUEUE_NAME="flume-rabbitmq-queue";
+    public final static String DEFAULT_EXCHANGE_NAME="flume-rabbitmq-exchange";
+    public final static String DEFAULT_ROUTING_KEY="flume-rabbitmq-routing-key";
+    public final static int DEFAULT_CONFIRM_TIMEOUT=500;
 }
+

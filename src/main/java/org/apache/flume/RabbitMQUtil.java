@@ -19,6 +19,7 @@
 
 package org.apache.flume;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.Map;
 
@@ -62,73 +63,49 @@ public class RabbitMQUtil {
     }
     
     public static String getQueueName(Context context) {
-        return context.getString(RabbitMQConstants.CONFIG_QUEUENAME, "");
-        //Preconditions.checkState(queueName!=null, "No queueName specified.");
+        return context.getString(FlumeRabbitMQConstants.CONFIG_QUEUENAME, "");
     }
     
     public static String getExchangeName(Context context){
-        return context.getString(RabbitMQConstants.CONFIG_EXCHANGENAME, "");
+        return context.getString(FlumeRabbitMQConstants.CONFIG_EXCHANGENAME, "");
     }
-    
+
     public static String[] getTopics( Context context ) {
-    	String list = context.getString( RabbitMQConstants.CONFIG_TOPICS, "" );
-    	
+    	String list = context.getString( FlumeRabbitMQConstants.CONFIG_TOPICS, "" );
+
     	if ( !list.equals("") ) {
     		return list.split(",");
     	}
-    	
+
     	return null;
     }
     
     public static ConnectionFactory getFactory(Context context){
-        Preconditions.checkArgument(context!=null, "context cannot be null.");
-        ConnectionFactory factory = new ConnectionFactory();
-        
-        String hostname = context.getString("hostname");
-        Preconditions.checkArgument(hostname!=null, "No hostname specified.");
-        factory.setHost(hostname);
-        
-        int port = context.getInteger(RabbitMQConstants.CONFIG_PORT, -1);
-        
-        if(-1!=port){
-            factory.setPort(port);
-        }
-        
-        String username = context.getString(RabbitMQConstants.CONFIG_USERNAME);
-        
-        if(null==username){
-            factory.setUsername(ConnectionFactory.DEFAULT_USER);
-        } else {
-            factory.setUsername(username);
-        }
-        
-        String password = context.getString(RabbitMQConstants.CONFIG_PASSWORD);
-        
-        if(null==password){
-            factory.setPassword(ConnectionFactory.DEFAULT_PASS);
-        } else {
-            factory.setPassword(password);
-        }
-        
-        String virtualHost = context.getString(RabbitMQConstants.CONFIG_VIRTUALHOST);
-        
-        if(null!=virtualHost){
-            factory.setVirtualHost(virtualHost);
-        }
-        
-        int connectionTimeout = context.getInteger(RabbitMQConstants.CONFIG_CONNECTIONTIMEOUT, -1);
-        
-        if(connectionTimeout>-1){
-           factory.setConnectionTimeout(connectionTimeout); 
-        }
-        
-        
-        
-//        boolean useSSL = context.getBoolean("usessl", false);
-//        if(useSSL){
-//            factory.useSslProtocol();
-//        }
-        
+    	//Hostname has to be set
+		Preconditions.checkArgument(context != null, "context cannot be null.");
+		Preconditions.checkArgument(context.getString("hostname") != null, "No hostname specified.");
+
+		String hostname = context.getString("hostname");
+		int port = context.
+				getInteger(FlumeRabbitMQConstants.CONFIG_PORT, ConnectionFactory.DEFAULT_AMQP_PORT);
+		String username = context.
+				getString(FlumeRabbitMQConstants.CONFIG_USERNAME, ConnectionFactory.DEFAULT_USER);
+		String password = context.
+				getString(FlumeRabbitMQConstants.CONFIG_PASSWORD, ConnectionFactory.DEFAULT_PASS);
+		String virtualHost = context
+				.getString(FlumeRabbitMQConstants.CONFIG_VIRTUALHOST, ConnectionFactory.DEFAULT_VHOST);
+		int connectionTimeout = context.
+				getInteger(FlumeRabbitMQConstants.CONFIG_CONNECTIONTIMEOUT, ConnectionFactory.DEFAULT_CONNECTION_TIMEOUT);
+
+		ConnectionFactory factory = new ConnectionFactory();
+		factory.setHost(hostname);
+		factory.setPort(port);
+		factory.setUsername(username);
+		factory.setPassword(password);
+		factory.setVirtualHost(virtualHost);
+		factory.setConnectionTimeout(connectionTimeout);
+		factory.setAutomaticRecoveryEnabled(true);
+		factory.setNetworkRecoveryInterval(60 * 1000); //auto recovery time interval set to 1 min
         
         return factory;
     }

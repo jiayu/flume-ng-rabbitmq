@@ -27,7 +27,7 @@ import org.apache.flume.CounterGroup;
 import org.apache.flume.Event;
 import org.apache.flume.EventDeliveryException;
 import org.apache.flume.PollableSource;
-import org.apache.flume.RabbitMQConstants;
+import org.apache.flume.FlumeRabbitMQConstants;
 import org.apache.flume.RabbitMQUtil;
 import org.apache.flume.conf.Configurable;
 import org.apache.flume.event.SimpleEvent;
@@ -74,7 +74,7 @@ public class RabbitMQSource extends AbstractSource implements Configurable, Poll
     }
     
     private void resetConnection(){
-        _CounterGroup.incrementAndGet(RabbitMQConstants.COUNTER_EXCEPTION);
+        _CounterGroup.incrementAndGet(FlumeRabbitMQConstants.COUNTER_EXCEPTION);
         if(log.isWarnEnabled())log.warn(this.getName() + " - Closing RabbitMQ connection and channel due to exception.");
         RabbitMQUtil.close(_Connection, _Channel);
         _Connection=null;
@@ -88,7 +88,7 @@ public class RabbitMQSource extends AbstractSource implements Configurable, Poll
             try {
                 if(log.isInfoEnabled())log.info(this.getName() + " - Opening connection to " + _ConnectionFactory.getHost() + ":" + _ConnectionFactory.getPort());
                 _Connection = _ConnectionFactory.newConnection();
-                _CounterGroup.incrementAndGet(RabbitMQConstants.COUNTER_NEW_CONNECTION);               
+                _CounterGroup.incrementAndGet(FlumeRabbitMQConstants.COUNTER_NEW_CONNECTION);
                 _Channel = null;
             } catch(Exception ex) {
                 if(log.isErrorEnabled()) log.error(this.getName() + " - Exception while establishing connection.", ex);
@@ -101,7 +101,7 @@ public class RabbitMQSource extends AbstractSource implements Configurable, Poll
             try {
                 if(log.isInfoEnabled())log.info(this.getName() + " - creating channel...");
                 _Channel = _Connection.createChannel();
-                _CounterGroup.incrementAndGet(RabbitMQConstants.COUNTER_NEW_CHANNEL);
+                _CounterGroup.incrementAndGet(FlumeRabbitMQConstants.COUNTER_NEW_CHANNEL);
                 if(log.isInfoEnabled())log.info(this.getName() + " - Connected to " + _ConnectionFactory.getHost() + ":" + _ConnectionFactory.getPort());
                 _Consumer=null;
                 if( StringUtils.isNotEmpty(_ExchangeName) ) {
@@ -148,10 +148,10 @@ public class RabbitMQSource extends AbstractSource implements Configurable, Poll
 
 		try {
 			 delivery = _Consumer.nextDelivery();
-			_CounterGroup.incrementAndGet(RabbitMQConstants.COUNTER_GET);
+			_CounterGroup.incrementAndGet(FlumeRabbitMQConstants.COUNTER_GET);
 		} 
 		catch (Exception ex) {
-			_CounterGroup.incrementAndGet(RabbitMQConstants.COUNTER_EXCEPTION);
+			_CounterGroup.incrementAndGet(FlumeRabbitMQConstants.COUNTER_EXCEPTION);
 			if (log.isErrorEnabled())
 				log.error(this.getName() + " - Exception thrown while pulling from queue.", ex);
 			resetConnection();
@@ -159,7 +159,7 @@ public class RabbitMQSource extends AbstractSource implements Configurable, Poll
 		}
 
 		if (null == delivery) {
-			_CounterGroup.incrementAndGet(RabbitMQConstants.COUNTER_GET_MISS);
+			_CounterGroup.incrementAndGet(FlumeRabbitMQConstants.COUNTER_GET_MISS);
 			return Status.BACKOFF;
 		}
 
@@ -179,9 +179,9 @@ public class RabbitMQSource extends AbstractSource implements Configurable, Poll
 
         try {
         	_Channel.basicAck(delivery.getEnvelope().getDeliveryTag(), false);
-            _CounterGroup.incrementAndGet(RabbitMQConstants.COUNTER_ACK);
+            _CounterGroup.incrementAndGet(FlumeRabbitMQConstants.COUNTER_ACK);
         } catch(Exception ex){
-            _CounterGroup.incrementAndGet(RabbitMQConstants.COUNTER_EXCEPTION);
+            _CounterGroup.incrementAndGet(FlumeRabbitMQConstants.COUNTER_EXCEPTION);
             if(log.isErrorEnabled())log.error(this.getName() + " - Exception thrown while sending ack to queue", ex);
             resetConnection();
             return Status.BACKOFF;            
@@ -198,8 +198,8 @@ public class RabbitMQSource extends AbstractSource implements Configurable, Poll
      */
     private void ensureConfigCompleteness( Context context ) {
     	
-    	if( StringUtils.isEmpty(context.getString( RabbitMQConstants.CONFIG_EXCHANGENAME ) ) &&
-    			StringUtils.isEmpty( context.getString( RabbitMQConstants.CONFIG_QUEUENAME ) ) ) {
+    	if( StringUtils.isEmpty(context.getString( FlumeRabbitMQConstants.CONFIG_EXCHANGENAME ) ) &&
+    			StringUtils.isEmpty( context.getString( FlumeRabbitMQConstants.CONFIG_QUEUENAME ) ) ) {
 
     		throw new IllegalArgumentException( "You must configure at least one of queue name or exchange name parameters" );
     	}
