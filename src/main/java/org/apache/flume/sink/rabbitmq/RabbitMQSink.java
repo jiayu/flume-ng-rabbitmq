@@ -108,14 +108,14 @@ public class RabbitMQSink extends AbstractSink implements Configurable {
 	public Status process() throws EventDeliveryException {
 		isRabbitMQConnected();
 		Transaction tx = getChannel().getTransaction();
+		Status status = Status.READY;
 		try {
 			tx.begin();
 			for(int i = 0; i < batchSize; i++){
 				Event e = getChannel().take();
-				if (e == null && i == 0) {
-					tx.rollback();
-					return Status.BACKOFF;
-				}else if (e == null && i > 0){
+				
+				if (e == null) {
+					if (i == 0) status = Status.BACKOFF;
 					break;
 				}
 
@@ -126,17 +126,18 @@ public class RabbitMQSink extends AbstractSink implements Configurable {
 			channel.waitForConfirms(confirmTimeout);
 			tx.commit();
 		} catch (Exception ex) {
+			//TODO need to find a better way to differentiate different types of exceptions
 			tx.rollback();
 
 			if (log.isErrorEnabled())
 				log.error(
 						this.getName()
 								+ " - error happens when sending message to rabbitMQ, will backoff a little bit", ex);
-			return Status.BACKOFF;
+			status = Status.BACKOFF;
 		} finally {
 			tx.close();
 		}
 
-		return Status.READY;
+		return status;
 	}
 }

@@ -82,7 +82,6 @@ public class RabbitMQSinkTest {
 		context.put("username", "test_user");
 		context.put("password", "password");
 		context.put("port", "4123");
-		// TODO test what does virtual_host do
 		context.put("virtualhost", "virtual_host");
 		context.put("exchangename", EXCHANGE_NAME);
 		context.put("batchsize", String.valueOf(BATCH_SIZE));
