@@ -19,8 +19,6 @@
 
 package org.apache.flume.sink.rabbitmq;
 
-import java.io.IOException;
-
 import org.apache.flume.Context;
 import org.apache.flume.CounterGroup;
 import org.apache.flume.Event;
@@ -29,7 +27,6 @@ import org.apache.flume.FlumeRabbitMQConstants;
 import org.apache.flume.RabbitMQUtil;
 import org.apache.flume.Transaction;
 import org.apache.flume.conf.Configurable;
-import org.apache.flume.lifecycle.LifecycleAware;
 import org.apache.flume.sink.AbstractSink;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +36,7 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.MessageProperties;
 
-public class RabbitMQSink extends AbstractSink implements Configurable, LifecycleAware {
+public class RabbitMQSink extends AbstractSink implements Configurable {
 	private static final Logger log = LoggerFactory.getLogger(RabbitMQSink.class);
 	private CounterGroup counterGroup;
 	private ConnectionFactory factory;
@@ -61,7 +58,7 @@ public class RabbitMQSink extends AbstractSink implements Configurable, Lifecycl
 
 	@Override
 	public synchronized void start() {
-		// TODO Auto-generated method stub
+		// TODO exchange should be declared here if needed
 		log.info("going to start the sink");
 		super.start();
 	}
@@ -91,8 +88,6 @@ public class RabbitMQSink extends AbstractSink implements Configurable, Lifecycl
 			}
 
 			channel = connection.createChannel();
-			//TODO according to our case, there is no need to declare exchanges/queues
-			//Should find a way to make this more generic though
 			channel.confirmSelect();
 			counterGroup.incrementAndGet(FlumeRabbitMQConstants.COUNTER_NEW_CHANNEL);
 		} catch (Exception ex) {
