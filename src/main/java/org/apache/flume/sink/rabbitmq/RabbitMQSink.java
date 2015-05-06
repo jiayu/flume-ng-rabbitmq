@@ -29,6 +29,7 @@ import org.apache.flume.FlumeRabbitMQConstants;
 import org.apache.flume.RabbitMQUtil;
 import org.apache.flume.Transaction;
 import org.apache.flume.conf.Configurable;
+import org.apache.flume.lifecycle.LifecycleAware;
 import org.apache.flume.sink.AbstractSink;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,13 +39,12 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.MessageProperties;
 
-public class RabbitMQSink extends AbstractSink implements Configurable {
+public class RabbitMQSink extends AbstractSink implements Configurable, LifecycleAware {
 	private static final Logger log = LoggerFactory.getLogger(RabbitMQSink.class);
 	private CounterGroup counterGroup;
 	private ConnectionFactory factory;
 	private Connection connection;
 	private Channel channel;
-	private String queueName;
 	private String exchangeName;
 	private String routingKey;
 	private int batchSize;
@@ -60,10 +60,16 @@ public class RabbitMQSink extends AbstractSink implements Configurable {
 	}
 
 	@Override
+	public synchronized void start() {
+		// TODO Auto-generated method stub
+		log.info("going to start the sink");
+		super.start();
+	}
+
+	@Override
 	public void configure(Context context) {
+		log.info("configuring the sink");
 		factory = RabbitMQUtil.getFactory(context);
-		queueName = context.getString(
-				FlumeRabbitMQConstants.CONFIG_QUEUENAME, FlumeRabbitMQConstants.DEFAULT_QUEUE_NAME);
 		exchangeName = context.getString(
 				FlumeRabbitMQConstants.CONFIG_EXCHANGENAME, FlumeRabbitMQConstants.DEFAULT_EXCHANGE_NAME);
 		batchSize = context.getInteger(
@@ -85,13 +91,11 @@ public class RabbitMQSink extends AbstractSink implements Configurable {
 			}
 
 			channel = connection.createChannel();
-			channel.exchangeDeclare(exchangeName, "direct");
-			channel.queueDeclare(queueName, true, false, false, null);
-			channel.queueBind(queueName, exchangeName, routingKey);
+			//TODO according to our case, there is no need to declare exchanges/queues
+			//Should find a way to make this more generic though
 			channel.confirmSelect();
 			counterGroup.incrementAndGet(FlumeRabbitMQConstants.COUNTER_NEW_CHANNEL);
 		} catch (Exception ex) {
-			// if a channel could not be established on startup, stop the agent
 			if (log.isErrorEnabled())
 				log.error(this.getName()
 						+ " - Exception while creating channel.", ex);

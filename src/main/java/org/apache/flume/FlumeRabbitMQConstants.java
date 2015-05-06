@@ -44,5 +44,7 @@ public class FlumeRabbitMQConstants {
     public final static String DEFAULT_EXCHANGE_NAME="flume-rabbitmq-exchange";
     public final static String DEFAULT_ROUTING_KEY="flume-rabbitmq-routing-key";
     public final static int DEFAULT_CONFIRM_TIMEOUT=500;
+    public final static boolean DEFAULT_QUEUE_DECLARE=false;
+    public final static boolean DEFAULT_EXCHANGE_DECLARE=false;
 }
 
