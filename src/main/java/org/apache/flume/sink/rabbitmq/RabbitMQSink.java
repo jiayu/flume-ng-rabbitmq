@@ -94,6 +94,7 @@ public class RabbitMQSink extends AbstractSink implements Configurable {
 			if (log.isErrorEnabled())
 				log.error(this.getName()
 						+ " - Exception while creating channel.", ex);
+			RabbitMQUtil.close(connection, channel);
 		}
 	}
 
@@ -133,6 +134,7 @@ public class RabbitMQSink extends AbstractSink implements Configurable {
 						this.getName()
 								+ " - error happens when sending message to rabbitMQ, will backoff a little bit", ex);
 			status = Status.BACKOFF;
+			RabbitMQUtil.close(connection, channel);
 		} finally {
 			tx.close();
 		}

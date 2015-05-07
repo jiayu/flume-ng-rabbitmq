@@ -116,6 +116,8 @@ public class RabbitMQUtil {
                 channel.close();
             } catch(Exception ex){
                 if(log.isErrorEnabled())log.error("Exception thrown while closing channel", ex);
+            }finally{
+            	channel = null;
             }
         }
         
@@ -124,6 +126,8 @@ public class RabbitMQUtil {
                 connection.close();
             } catch(Exception ex){
                 if(log.isErrorEnabled())log.error("Exception thrown while closing connection", ex);
+            }finally{
+            	connection = null;
             }
         }
     }
